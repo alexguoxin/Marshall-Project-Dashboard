@@ -2,6 +2,7 @@ library(shiny)
 library(tidyverse)
 library(DT)
 
+# read in dataset and rename the column
 marshall <- read.csv("ucr_crime_1975_2015.csv") %>% 
   select(Year = year,
          City = department_name,
@@ -25,12 +26,17 @@ ui <- fluidPage(
   
   sidebarLayout(
     sidebarPanel(
+      # Select city
       selectInput("cityInput", "City",
                   sort(unique(marshall$City)),
                   multiple = TRUE),
+      
+      # Select year range
       sliderInput("yearInput", "Year",
                   min = 1975, max = 2015, value = c(1975, 2015)),
       h4("What to plot with Year?"),
+      
+      # Select the type of crime to be plotted with year in raw data
       selectInput("crimeYearRawInput", label = "Raw Data", 
                   choices = c("Homicides" = "Homicides", 
                               "Rape" = "Rape", 
@@ -38,6 +44,8 @@ ui <- fluidPage(
                               "Aggravated Assault" = "Aggravated_Assault", 
                               "Total Crime" = "Total_Crime"),
                   selected = "Homicides"),
+      
+      # Select the type of crime to be plotted with year in normalized data
       selectInput("crimeYearNormInput", label = "Normalized Data (per 100k population)", 
                   choices = c("Homicides" = "Homicides_per_100k", 
                               "Rape" = "Rape_per_100k", 
@@ -45,9 +53,13 @@ ui <- fluidPage(
                               "Aggravated Assault" = "Aggravated_Assault_per_100k", 
                               "Total Crime" = "Total_Crime_per_100k"),
                   selected = "Homicides"),
+      
+      # Select population range
       sliderInput("popInput", "Population",
                   min = 100000, max = 9000000, value = c(100000, 9000000)),
       h4("What to plot with Population?"),
+      
+      # Select the type of crime to be plotted with population in raw data
       selectInput("crimePopRawInput", label = "Raw Data", 
                   choices = c("Homicides" = "Homicides", 
                               "Rape" = "Rape", 
@@ -55,6 +67,8 @@ ui <- fluidPage(
                               "Aggravated Assault" = "Aggravated_Assault", 
                               "Total Crime" = "Total_Crime"),
                   selected = "Homicides"),
+      
+      # Select the type of crime to be plotted with population in normalized data
       selectInput("crimePopNormInput", label = "Normalized Data (per 100k population)", 
                   choices = c("Homicides" = "Homicides_per_100k", 
                               "Rape" = "Rape_per_100k", 
@@ -101,6 +115,7 @@ server <- function(input, output) {
       )
   })
   
+  # plot Raw Crime Count vs. Year
   output$rawYearPlot <- renderPlot({
     if (is.null(filtered())) {
       return()
@@ -112,6 +127,7 @@ server <- function(input, output) {
       theme(legend.position = "bottom", plot.title = element_text(hjust = 0.5))
   })
   
+  # plot Normalized Crime Count vs. Year
   output$normalizedYearPlot <- renderPlot({
     if (is.null(filtered())) {
       return()
@@ -123,6 +139,7 @@ server <- function(input, output) {
       theme(legend.position = "bottom", plot.title = element_text(hjust = 0.5))
   })
   
+  # plot Raw Crime Count vs. Population
   output$rawPopPlot <- renderPlot({
     if (is.null(filtered())) {
       return()
@@ -135,6 +152,7 @@ server <- function(input, output) {
       theme(legend.position = "bottom", plot.title = element_text(hjust = 0.5))
   })
   
+  # plot Normalized Crime Count vs. Population
   output$normalizedPopPlot <- renderPlot({
     if (is.null(filtered())) {
       return()
@@ -147,6 +165,7 @@ server <- function(input, output) {
       theme(legend.position = "bottom", plot.title = element_text(hjust = 0.5))
   })
   
+  # render result table
   output$results <- renderDataTable({
     if (is.null(filtered())) {
       return()
