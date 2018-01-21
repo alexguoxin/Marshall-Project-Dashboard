@@ -69,24 +69,20 @@ ui <- fluidPage(
         column(6,
                plotOutput("rawYearPlot")
         ),
-        
         column(6, 
                plotOutput("normalizedYearPlot")
         )
       ),
-      
       fluidRow(
         column(6,
                plotOutput("rawPopPlot")
         ),
-        
         column(6, 
                plotOutput("normalizedPopPlot")
         )
       )
     )
   ),
-  
   dataTableOutput("results")
 )
 
