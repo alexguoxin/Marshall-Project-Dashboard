@@ -1,7 +1,23 @@
 library(shiny)
 library(tidyverse)
+library(DT)
 
-marshall <- read.csv("ucr_crime_1975_2015.csv")
+marshall <- read.csv("ucr_crime_1975_2015.csv") %>% 
+  select(Year = year,
+         City = department_name,
+         Population = total_pop,
+         Homicides = homs_sum,
+         Rape = rape_sum,
+         Robbery = rob_sum,
+         Aggravated_Assault = agg_ass_sum,
+         Total_Crime = violent_crime,
+         Homicides_per_100k = homs_per_100k,
+         Rape_per_100k = rape_per_100k,
+         Robbery_per_100k = rob_per_100k,
+         Aggravated_Assault_per_100k = agg_ass_per_100k,
+         Total_Crime_per_100k = violent_per_100k
+         )
+
 
 ui <- fluidPage(
   titlePanel("Marshall Project Dashboard"),
@@ -10,41 +26,41 @@ ui <- fluidPage(
   sidebarLayout(
     sidebarPanel(
       selectInput("cityInput", "City",
-                  sort(unique(marshall$department_name)),
+                  sort(unique(marshall$City)),
                   multiple = TRUE),
       sliderInput("yearInput", "Year",
                   min = 1975, max = 2015, value = c(1975, 2015)),
       h4("What to plot with Year?"),
       selectInput("crimeYearRawInput", label = "Raw Data", 
-                  choices = c("Homicides" = "homs_sum", 
-                              "Rape" = "rape_sum", 
-                              "Robbery" = "rob_sum", 
-                              "Aggravated Assault" = "agg_ass_sum", 
-                              "Sum of All" = "violent_crime"),
+                  choices = c("Homicides" = "Homicides", 
+                              "Rape" = "Rape", 
+                              "Robbery" = "Robbery", 
+                              "Aggravated Assault" = "Aggravated_Assault", 
+                              "Total Crime" = "Total_Crime"),
                   selected = "Homicides"),
       selectInput("crimeYearNormInput", label = "Normalized Data (per 100k population)", 
-                  choices = c("Homicides" = "homs_per_100k", 
-                              "Rape" = "rape_per_100k", 
-                              "Robbery" = "rob_per_100k", 
-                              "Aggravated Assault" = "agg_ass_per_100k", 
-                              "Sum of All" = "violent_per_100k"),
+                  choices = c("Homicides" = "Homicides_per_100k", 
+                              "Rape" = "Rape_per_100k", 
+                              "Robbery" = "Robbery_per_100k", 
+                              "Aggravated Assault" = "Aggravated_Assault_per_100k", 
+                              "Total Crime" = "Total_Crime_per_100k"),
                   selected = "Homicides"),
       sliderInput("popInput", "Population",
                   min = 100000, max = 9000000, value = c(100000, 9000000)),
       h4("What to plot with Population?"),
       selectInput("crimePopRawInput", label = "Raw Data", 
-                  choices = c("Homicides" = "homs_sum", 
-                              "Rape" = "rape_sum", 
-                              "Robbery" = "rob_sum", 
-                              "Aggravated Assault" = "agg_ass_sum", 
-                              "Sum of All" = "violent_crime"),
+                  choices = c("Homicides" = "Homicides", 
+                              "Rape" = "Rape", 
+                              "Robbery" = "Robbery", 
+                              "Aggravated Assault" = "Aggravated_Assault", 
+                              "Total Crime" = "Total_Crime"),
                   selected = "Homicides"),
       selectInput("crimePopNormInput", label = "Normalized Data (per 100k population)", 
-                  choices = c("Homicides" = "homs_per_100k", 
-                              "Rape" = "rape_per_100k", 
-                              "Robbery" = "rob_per_100k", 
-                              "Aggravated Assault" = "agg_ass_per_100k", 
-                              "Sum of All" = "violent_per_100k"),
+                  choices = c("Homicides" = "Homicides_per_100k", 
+                              "Rape" = "Rape_per_100k", 
+                              "Robbery" = "Robbery_per_100k", 
+                              "Aggravated Assault" = "Aggravated_Assault_per_100k", 
+                              "Total Crime" = "Total_Crime_per_100k"),
                   selected = "Homicides")
     ),
     
@@ -67,25 +83,25 @@ ui <- fluidPage(
         column(6, 
                plotOutput("normalizedPopPlot")
         )
-      ),
-      
-      tableOutput("results")
+      )
     )
-  )
+  ),
+  
+  dataTableOutput("results")
 )
+
 
 server <- function(input, output) {
   filtered <- reactive({
     if (is.null(input$cityInput)) {
       return(NULL)
-    }    
-    
+    }  
     marshall %>%
-      filter(year >= input$yearInput[1],
-             year <= input$yearInput[2],
-             total_pop >= input$popInput[1],
-             total_pop <= input$popInput[2],
-             department_name %in% input$cityInput
+      filter(Year >= input$yearInput[1],
+             Year <= input$yearInput[2],
+             Population >= input$popInput[1],
+             Population <= input$popInput[2],
+             City %in% input$cityInput
       )
   })
   
@@ -93,11 +109,10 @@ server <- function(input, output) {
     if (is.null(filtered())) {
       return()
     }
-    
-    ggplot(filtered(), aes_string("year", input$crimeYearRawInput, group = "department_name", color = "department_name")) +
+    ggplot(filtered(), aes_string("Year", input$crimeYearRawInput, group = "City", color = "City")) +
       geom_line() +
       scale_color_discrete(name = "City") +
-      labs(x = "Year", y = "Number of Crime Reported", title = "Raw Crime Count vs. Year") +
+      labs(x = "Year", y = input$crimeYearRawInput, title = "Raw Crime Count vs. Year") +
       theme(legend.position = "bottom", plot.title = element_text(hjust = 0.5))
   })
   
@@ -105,11 +120,10 @@ server <- function(input, output) {
     if (is.null(filtered())) {
       return()
     }
-    
-    ggplot(filtered(), aes_string("year", input$crimeYearNormInput, group = "department_name", color = "department_name")) +
+    ggplot(filtered(), aes_string("Year", input$crimeYearNormInput, group = "City", color = "City")) +
       geom_line() +
       scale_color_discrete(name = "City") +
-      labs(x = "Year", y = "Number of Crime Reported per 100k", title = "Normalized Crime Count vs. Year") +
+      labs(x = "Year", y = input$crimeYearNormInput, title = "Normalized Crime Count vs. Year") +
       theme(legend.position = "bottom", plot.title = element_text(hjust = 0.5))
   })
   
@@ -117,12 +131,11 @@ server <- function(input, output) {
     if (is.null(filtered())) {
       return()
     }
-    
-    ggplot(filtered(), aes_string("total_pop", input$crimePopRawInput, group = "department_name", color = "department_name")) +
+    ggplot(filtered(), aes_string("Population", input$crimePopRawInput, group = "City", color = "City")) +
       geom_point() +
       scale_color_discrete(name = "City") +
       scale_x_continuous(labels = scales::comma) +
-      labs(x = "Population", y = "Number of Crime Reported", title = "Raw Crime Count vs. Population") +
+      labs(x = "Population", y = input$crimePopRawInput, title = "Raw Crime Count vs. Population") +
       theme(legend.position = "bottom", plot.title = element_text(hjust = 0.5))
   })
   
@@ -130,17 +143,33 @@ server <- function(input, output) {
     if (is.null(filtered())) {
       return()
     }
-    
-    ggplot(filtered(), aes_string("total_pop", input$crimePopNormInput, group = "department_name", color = "department_name")) +
+    ggplot(filtered(), aes_string("Population", input$crimePopNormInput, group = "City", color = "City")) +
       geom_point() +
       scale_color_discrete(name = "City") +
       scale_x_continuous(labels = scales::comma) +
-      labs(x = "Population", y = "Number of Crime Reported per 100k", title = "Normalized Crime Count vs. Population") +
+      labs(x = "Population", y = input$crimePopNormInput, title = "Normalized Crime Count vs. Population") +
       theme(legend.position = "bottom", plot.title = element_text(hjust = 0.5))
   })
   
-  output$results <- renderTable({
-    filtered()
+  output$results <- renderDataTable({
+    if (is.null(filtered())) {
+      return()
+    }
+    datatable(filtered(), colnames = c("Year" = "Year",
+                                       "City" = "City",
+                                       "Population" = "Population",
+                                       "Homicides" = "Homicides", 
+                                       "Rape" = "Rape", 
+                                       "Robbery" = "Robbery", 
+                                       "Aggravated Assault" = "Aggravated_Assault", 
+                                       "Total Crime" = "Total_Crime",
+                                       "Homicides per 100k" = "Homicides_per_100k", 
+                                       "Rape per 100k" = "Rape_per_100k", 
+                                       "Robbery per 100k" = "Robbery_per_100k", 
+                                       "Aggravated Assault per 100k" = "Aggravated_Assault_per_100k", 
+                                       "Total Crime per 100k" = "Total_Crime_per_100k"
+                                       )
+              )
   })
 }
 
