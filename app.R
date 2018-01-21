@@ -121,6 +121,7 @@ server <- function(input, output) {
     ggplot(filtered(), aes_string("total_pop", input$crimePopRawInput, group = "department_name", color = "department_name")) +
       geom_point() +
       scale_color_discrete(name = "City") +
+      scale_x_continuous(labels = scales::comma) +
       labs(x = "Population", y = "Number of Crime Reported", title = "Raw Crime Count vs. Population") +
       theme(legend.position = "bottom", plot.title = element_text(hjust = 0.5))
   })
@@ -133,6 +134,7 @@ server <- function(input, output) {
     ggplot(filtered(), aes_string("total_pop", input$crimePopNormInput, group = "department_name", color = "department_name")) +
       geom_point() +
       scale_color_discrete(name = "City") +
+      scale_x_continuous(labels = scales::comma) +
       labs(x = "Population", y = "Number of Crime Reported per 100k", title = "Normalized Crime Count vs. Population") +
       theme(legend.position = "bottom", plot.title = element_text(hjust = 0.5))
   })
