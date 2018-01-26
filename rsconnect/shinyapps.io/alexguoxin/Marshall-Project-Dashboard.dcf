@@ -5,8 +5,8 @@ account: alexguoxin
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 259043
-bundleId: 1189439
+bundleId: 1197051
 url: https://alexguoxin.shinyapps.io/Marshall-Project-Dashboard/
-when: 1516738449.02767
+when: 1516993542.89938
 asMultiple: FALSE
 asStatic: FALSE
