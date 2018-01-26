@@ -3,7 +3,7 @@ library(tidyverse)
 library(DT)
 
 # read in dataset and rename the column
-marshall <- read.csv("ucr_crime_1975_2015.csv") %>% 
+marshall <- read.csv("data/ucr_crime_1975_2015.csv") %>% 
   select(Year = year,
          City = department_name,
          Population = total_pop,
