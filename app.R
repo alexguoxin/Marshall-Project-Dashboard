@@ -24,79 +24,78 @@ ui <- fluidPage(
   titlePanel("Marshall Project Dashboard"),
   h2("US Crime Data"),
   
-  sidebarLayout(
-    sidebarPanel(
-      # Select city
-      selectInput("cityInput", "City",
-                  sort(unique(marshall$City)),
-                  multiple = TRUE),
-      
-      # Select year range
-      sliderInput("yearInput", "Year",
-                  min = 1975, max = 2015, value = c(1975, 2015)),
-      h4("What to plot with Year?"),
-      
-      # Select the type of crime to be plotted with year in raw data
-      selectInput("crimeYearRawInput", label = "Raw Data", 
-                  choices = c("Homicides" = "Homicides", 
-                              "Rape" = "Rape", 
-                              "Robbery" = "Robbery", 
-                              "Aggravated Assault" = "Aggravated_Assault", 
-                              "Total Crime" = "Total_Crime"),
-                  selected = "Homicides"),
-      
-      # Select the type of crime to be plotted with year in normalized data
-      selectInput("crimeYearNormInput", label = "Normalized Data (per 100k population)", 
-                  choices = c("Homicides" = "Homicides_per_100k", 
-                              "Rape" = "Rape_per_100k", 
-                              "Robbery" = "Robbery_per_100k", 
-                              "Aggravated Assault" = "Aggravated_Assault_per_100k", 
-                              "Total Crime" = "Total_Crime_per_100k"),
-                  selected = "Homicides"),
-      
-      # Select population range
-      sliderInput("popInput", "Population",
-                  min = 100000, max = 9000000, value = c(100000, 9000000)),
-      h4("What to plot with Population?"),
-      
-      # Select the type of crime to be plotted with population in raw data
-      selectInput("crimePopRawInput", label = "Raw Data", 
-                  choices = c("Homicides" = "Homicides", 
-                              "Rape" = "Rape", 
-                              "Robbery" = "Robbery", 
-                              "Aggravated Assault" = "Aggravated_Assault", 
-                              "Total Crime" = "Total_Crime"),
-                  selected = "Homicides"),
-      
-      # Select the type of crime to be plotted with population in normalized data
-      selectInput("crimePopNormInput", label = "Normalized Data (per 100k population)", 
-                  choices = c("Homicides" = "Homicides_per_100k", 
-                              "Rape" = "Rape_per_100k", 
-                              "Robbery" = "Robbery_per_100k", 
-                              "Aggravated Assault" = "Aggravated_Assault_per_100k", 
-                              "Total Crime" = "Total_Crime_per_100k"),
-                  selected = "Homicides")
+  # Select city
+  selectInput("cityInput", "City",
+              sort(unique(marshall$City)),
+              multiple = TRUE),
+  
+  tabsetPanel(
+    tabPanel("Line Chart vs. Year", 
+             sidebarLayout(
+               sidebarPanel(
+                 # Select year range
+                 sliderInput("yearInput", "Year",
+                             min = 1975, max = 2015, value = c(1975, 2015)),
+                 h4("What to plot with Year?"),
+                 
+                 # Select the type of crime to be plotted with year in raw data
+                 selectInput("crimeYearRawInput", label = "Raw Data", 
+                             choices = c("Homicides" = "Homicides", 
+                                         "Rape" = "Rape", 
+                                         "Robbery" = "Robbery", 
+                                         "Aggravated Assault" = "Aggravated_Assault", 
+                                         "Total Crime" = "Total_Crime"),
+                             selected = "Homicides"),
+                 
+                 # Select the type of crime to be plotted with year in normalized data
+                 selectInput("crimeYearNormInput", label = "Normalized Data (Raw Data/100k)", 
+                             choices = c("Homicides" = "Homicides_per_100k", 
+                                         "Rape" = "Rape_per_100k", 
+                                         "Robbery" = "Robbery_per_100k", 
+                                         "Aggravated Assault" = "Aggravated_Assault_per_100k", 
+                                         "Total Crime" = "Total_Crime_per_100k"),
+                             selected = "Homicides")
+               ),
+               mainPanel(
+                 plotOutput("rawYearPlot"),
+                 plotOutput("normalizedYearPlot")
+               )
+             )
     ),
-    
-    mainPanel(
-      fluidRow(
-        column(6,
-               plotOutput("rawYearPlot")
-        ),
-        column(6, 
-               plotOutput("normalizedYearPlot")
-        )
-      ),
-      fluidRow(
-        column(6,
-               plotOutput("rawPopPlot")
-        ),
-        column(6, 
-               plotOutput("normalizedPopPlot")
-        )
-      )
+    tabPanel("Scatter Plot vs. Population",
+             sidebarLayout(
+               sidebarPanel(
+                 # Select population range
+                 sliderInput("popInput", "Population",
+                             min = 100000, max = 9000000, value = c(100000, 9000000)),
+                 h4("What to plot with Population?"),
+                 
+                 # Select the type of crime to be plotted with population in raw data
+                 selectInput("crimePopRawInput", label = "Raw Data", 
+                             choices = c("Homicides" = "Homicides", 
+                                         "Rape" = "Rape", 
+                                         "Robbery" = "Robbery", 
+                                         "Aggravated Assault" = "Aggravated_Assault", 
+                                         "Total Crime" = "Total_Crime"),
+                             selected = "Homicides"),
+                 
+                 # Select the type of crime to be plotted with population in normalized data
+                 selectInput("crimePopNormInput", label = "Normalized Data (Raw Data/100k)", 
+                             choices = c("Homicides" = "Homicides_per_100k", 
+                                         "Rape" = "Rape_per_100k", 
+                                         "Robbery" = "Robbery_per_100k", 
+                                         "Aggravated Assault" = "Aggravated_Assault_per_100k", 
+                                         "Total Crime" = "Total_Crime_per_100k"),
+                             selected = "Homicides")
+               ),
+               mainPanel(
+                 plotOutput("rawPopPlot"),
+                 plotOutput("normalizedPopPlot")
+               )
+             )
     )
   ),
+
   dataTableOutput("results")
 )
 
