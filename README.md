@@ -28,7 +28,8 @@ Just select the cities, year range, population range and the type of crime to be
 	- Select the type of crime to be plotted with population in raw data
 	- Select the type of crime to be plotted with population in normalized data 
 
-Then the plots will show up on the right in different tabs and a table will be on the bottom.
+Then the plots will show up on the right in different tabs and a filtered searchable table will be on the bottom.
 
 ![](figure/1.png)
 
+![](figure/2.png)
