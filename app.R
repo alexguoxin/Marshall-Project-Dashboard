@@ -62,6 +62,7 @@ ui <- fluidPage(
                )
              )
     ),
+    
     tabPanel("Scatter Plot vs. Population",
              sidebarLayout(
                sidebarPanel(
