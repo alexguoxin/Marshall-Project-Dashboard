@@ -27,7 +27,7 @@ ui <- fluidPage(
   # Select city
   selectInput("cityInput", "City",
               sort(unique(marshall$City)),
-              multiple = TRUE),
+              multiple = TRUE, selected = "Albuquerque, N.M."),
   
   tabsetPanel(
     tabPanel("Line Chart vs. Year", 
