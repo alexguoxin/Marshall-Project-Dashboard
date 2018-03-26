@@ -6,7 +6,7 @@ Xin (Alex) Guo, Jan 2018
 
 ## Overview
 
-Violent crimes have been an importatnt problem in the society. If we could understand what kind of city has high crime rate, it may be possible to reduce the crime from happening, also help the government to improve policies and regulations, and help people to choose where to live. To address this challenge, I built a data visualization app that allows people to visually explore a dataset of crime in US cities. My app will show crime information of selected cities, and allow users to explore different aspects of this data by filtering and re-ordering on different variables in order to compare factors that affects crime.
+Violent crimes have been an important problem in the society. If we could understand what kind of city has high crime rate, it may be possible to reduce the crime from happening, also help the government to improve policies and regulations, and help people to choose where to live. To address this challenge, I built a data visualization app that allows people to visually explore a dataset of crime in US cities. My app will show crime information of selected cities, and allow users to explore different aspects of this data by filtering and re-ordering on different variables in order to compare factors that affects crime.
 
 ## Description of the Data
 
